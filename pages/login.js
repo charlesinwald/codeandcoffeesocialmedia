@@ -21,7 +21,8 @@ export default function Home() {
       setIsSubmitting(true);
       setError("");
       try {
-        const res = await fetch(`${BACKEND_URL}/auth/login`, {
+          const url = isRegistration ? `${BACKEND_URL}/auth/signup` : `${BACKEND_URL}/auth/login`;
+        const res = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -110,10 +111,10 @@ export default function Home() {
                       </label>
                     )}
                     {!isRegistration && (
-                      <label className="label">
+                      <label className="label text-center">
                         <a
                           onClick={() => setIsRegistration(true)}
-                          className="label-text-alt link link-hover"
+                          className="label-text-alt link link-hover text-center"
                         >
                           Create an account
                         </a>
