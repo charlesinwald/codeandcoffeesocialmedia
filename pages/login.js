@@ -3,6 +3,7 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import { useState } from "react";
 import { BACKEND_URL } from "../const";
+import { authenticateUser } from "../auth";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -26,6 +27,8 @@ export default function Home() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            // Access Control Allow Origin: *
+            "Access-Control-Allow-Origin": "*",
           },
           body: JSON.stringify({
             email,
@@ -33,6 +36,7 @@ export default function Home() {
           }),
         });
         const data = await res.json();
+        console.log(data);
         if (data.error) {
           setError(data.error);
         } else {
@@ -53,7 +57,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <div className="hero min-h-screen bg-base-200">
+        <div className="hero bg-scroll bg-bg min-h-screen bg-base-200">
           <div className="hero-content flex-col lg:flex-row-reverse">
             <div className="text-center lg:text-left">
               <h1 className="text-5xl font-bold">Login now!</h1>
@@ -137,7 +141,7 @@ export default function Home() {
                   <div className="form-control mt-6">
                     <button
                       disabled={!password || (isRegistration && !confirmPassword) || (isRegistration && password !== confirmPassword) || isSubmitting}
-                      className="btn btn-primary"
+                      className="btn btn-primary bg-gray-light border-gray-light hover:bg-gray-light"
                     >
                       {isRegistration ? "Register" : "Login"}
                     </button>
