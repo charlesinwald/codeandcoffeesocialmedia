@@ -1,9 +1,11 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 // https://medium.com/web-dev-survey-from-kyoto/how-to-customize-the-file-upload-button-in-react-b3866a5973d8
-export function Uplodader(props) {
+export function Uploader(props) {
   // Create a reference to the hidden file input element
   const hiddenFileInput = useRef(null);
+
+  const [file, setFile] = useState(null);
 
   // Programatically click the hidden file input element
   // when the Button component is clicked
@@ -15,7 +17,11 @@ export function Uplodader(props) {
   // to handle the user-selected file
   const handleChange = (event) => {
     const fileUploaded = event.target.files[0];
-    props.handleChange(fileUploaded);
+    setFile(fileUploaded);
+  };
+
+  const submit = () => {
+    props.handleChange(file);
   };
 
   return (
@@ -35,7 +41,9 @@ export function Uplodader(props) {
               onClick={handleClick}
               className="p-8 block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-dashed border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
             >
-              <p className="text-lg text-center">Click here to upload a file!</p>
+              <p className="text-lg text-center">
+                Click here to upload a file!
+              </p>
               <input
                 onChange={handleChange}
                 ref={hiddenFileInput}
@@ -43,6 +51,12 @@ export function Uplodader(props) {
                 id="file_input"
                 type="file"
               />
+            </div>
+            <p className="py-4"></p>
+            <div className="flex justify-center">
+              {
+                file && <button className="btn btn-outline" onClick={() => submit() }>Submit</button>
+                }
             </div>
           </label>
         </label>

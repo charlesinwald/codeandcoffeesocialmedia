@@ -5,15 +5,18 @@ import { useState } from "react";
 import { BACKEND_URL } from "../const";
 import { authenticateUser } from "../auth";
 
-export default function Home() {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [isRegistration, setIsRegistration] = useState(false);
 
   const handleSubmit = async (e) => {
+    console.log("handleSubmit", e);
     if (password !== confirmPassword && isRegistration) {
       setError("Passwords do not match");
       return;
@@ -22,21 +25,29 @@ export default function Home() {
       setIsSubmitting(true);
       setError("");
       try {
-          const url = isRegistration ? `${BACKEND_URL}/auth/signup` : `${BACKEND_URL}/auth/login`;
+        const url = isRegistration
+          ? `${BACKEND_URL}/api/users`
+          : `${BACKEND_URL}/api/auth`;
         const res = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             // Access Control Allow Origin: *
-            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Origin": "http://localhost:3001",
           },
           body: JSON.stringify({
             email,
             password,
+            firstName,
+            lastName,
           }),
         });
         const data = await res.json();
         console.log(data);
+        //asve to local storage
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
         if (data.error) {
           setError(data.error);
         } else {
@@ -107,6 +118,34 @@ export default function Home() {
                         />
                       </div>
                     )}
+                    {isRegistration && (
+                      <div className="form-control">
+                        <label className="label">
+                          <span className="label-text">First Name</span>
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="first name"
+                          className="input input-bordered"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                        />
+                      </div>
+                    )}
+                    {isRegistration && (
+                      <div className="form-control">
+                        <label className="label">
+                          <span className="label-text">Last Name</span>
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="last name"
+                          className="input input-bordered"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                        />
+                      </div>
+                    )}
                     {!isRegistration && (
                       <label className="label">
                         <a href="#" className="label-text-alt link link-hover">
@@ -140,7 +179,12 @@ export default function Home() {
                   </label>
                   <div className="form-control mt-6">
                     <button
-                      disabled={!password || (isRegistration && !confirmPassword) || (isRegistration && password !== confirmPassword) || isSubmitting}
+                      disabled={
+                        !password ||
+                        (isRegistration && !confirmPassword) ||
+                        (isRegistration && password !== confirmPassword) ||
+                        isSubmitting
+                      }
                       className="btn btn-primary bg-gray-light border-gray-light hover:bg-gray-light"
                     >
                       {isRegistration ? "Register" : "Login"}

@@ -3,23 +3,30 @@ import Image from "next/image";
 import Feed from "../components/Feed";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { Uplodader } from "../components/Uploader";
+import { Uploader as Uploader } from "../components/Uploader";
 import styles from "../styles/Home.module.css";
 import { useState, useEffect } from "react";
 import { BACKEND_URL } from "../const";
 
 export default function Home() {
   const [uploaderOpen, setUploaderOpen] = useState(false);
-  useEffect(() => {
-    fetch(`${BACKEND_URL}/auth/posts`)
-      .then((data) => {
-        console.log(data);
-      });
-  }, []);
+
 
   const handleUpload = (e) => {
-    console.log('handleUpload', e);
-  }
+    console.log("handleUpload", e);
+    let data = new FormData();
+    data.append("photo", e);
+    const headers = {
+      "x-auth-token": localStorage.getItem("token"),
+    };
+    fetch(`${BACKEND_URL}/api/post`, {
+      method: "POST",
+      headers,
+      body: data,
+    }).then((data) => {
+      console.log(data);
+    });
+  };
 
   return (
     <div className={styles.container}>
@@ -32,7 +39,11 @@ export default function Home() {
       <div className="flex flex-col md:flex-row">
         <Feed />
         <Sidebar />
-        <Uplodader open={uploaderOpen} setUploaderOpen={setUploaderOpen} handleChange={handleUpload} />
+        <Uploader
+          open={uploaderOpen}
+          setUploaderOpen={setUploaderOpen}
+          handleChange={handleUpload}
+        />
       </div>
     </div>
   );

@@ -1,29 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FeedItem from "./FeedItem";
-
-const posts = [
-  {
-    id: 1,
-    title: "Post 1",
-    owner_id: 1,
-    image: "https://source.unsplash.com/random",
-  },
-  {
-    id: 2,
-    title: "Post 2",
-    owner_id: 1,
-    image: "https://source.unsplash.com/random",
-  },
-];
+import { BACKEND_URL } from "../const";
 
 export default function Feed() {
+  const [posts, setPosts] = useState([]);
+  const getPosts = async () => {
+    const headers = {
+      "x-auth-token": localStorage.getItem("token"),
+    };
+    const res = await fetch(`${BACKEND_URL}/api/post`, {
+      method: "GET",
+      headers,
+    });
+    const data = await res.json();
+    setPosts(data);
+  };
+
+  useEffect(() => {
+    getPosts();
+  }, []);
   return (
     <div className="m-3 container mx-auto flex-2xl">
-      {posts.map((post) => (
-        FeedItem(post)
-      ))}
+      {posts.map((post) => FeedItem(post))}
     </div>
   );
 }
-
-
